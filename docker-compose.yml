@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  # Flask 应用服务
+  flask-app:
+    build: .  # 基于当前目录的 Dockerfile 构建镜像
+    restart: always  # 容器崩溃自动重启
+    ports:
+      - "80:5000"  # 服务器 80 端口 → 容器 5000 端口
+    environment:
+      - MYSQL_HOST=mysql          # Docker 内部服务名，固定写 mysql
+      - MYSQL_PORT=3306
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=123456  # 必须改！比如 123456abc
+      - MYSQL_DB=database         # 自动创建的数据库名
+    depends_on:
+      - mysql  # 先启动 MySQL 再启动 Flask
+    networks:
+      - flask-network
+
+  # MySQL 数据库服务
+  mysql:
+    image: mysql:8.0  # 稳定版 MySQL
+    restart: always
+    ports:
+      - "3306:3306"  # 生产环境可注释，仅内网访问
+    environment:
+      - MYSQL_ROOT_PASSWORD=你的数据库密码  # 和上面一致！
+      - MYSQL_DATABASE=flask_db
+      - MYSQL_CHARACTER_SET_SERVER=utf8mb4  # 避免中文乱码
+      - TZ=Asia/Shanghai  # 统一时区
+    volumes:
+      - mysql-data:/var/lib/mysql  # 数据持久化（删容器不丢数据）
+      - ./sql:/docker-entrypoint-initdb.d  # 初始化脚本目录（可选）
+    networks:
+      - flask-network
+
+# 自定义网络：让 Flask 和 MySQL 互通
+networks:
+  flask-network:
+    driver: bridge
+
+# 数据卷：持久化 MySQL 数据
+volumes:
+  mysql-data:
