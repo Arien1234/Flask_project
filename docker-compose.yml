@@ -25,8 +25,8 @@ services:
     ports:
       - "3306:3306"  # 生产环境可注释，仅内网访问
     environment:
-      - MYSQL_ROOT_PASSWORD=你的数据库密码  # 和上面一致！
-      - MYSQL_DATABASE=flask_db
+      - MYSQL_ROOT_PASSWORD=123456  # 和上面一致！
+      - MYSQL_DATABASE=database
       - MYSQL_CHARACTER_SET_SERVER=utf8mb4  # 避免中文乱码
       - TZ=Asia/Shanghai  # 统一时区
     volumes:

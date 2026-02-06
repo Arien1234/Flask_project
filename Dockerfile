@@ -1,18 +1,20 @@
-# 基础镜像：Python 3.11 轻量版（兼容大部分 Flask 项目）
-FROM python:3.11-slim
+# 基础镜像（和本地Python版本一致，如3.9）
+FROM python:3.9-slim
 
-# 设置工作目录
+# 容器内工作目录（自定义，如/app）
 WORKDIR /app
 
-# 复制依赖文件，利用 Docker 缓存（先装依赖再复制代码，提速）
+# 复制依赖文件
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 
-# 复制所有项目代码到容器
+# 安装依赖（CentOS下同样可用阿里云源加速）
+RUN pip install --no-cache-dir -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple/
+
+# 复制所有项目文件
 COPY . .
 
-# 暴露端口（和 app.py 里的 5000 对应）
+# 暴露端口（和app.py的port一致，如5000）
 EXPOSE 5000
 
-# 生产环境启动命令（用 gunicorn 替代直接运行）
-CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:5000", "--workers", "2"]
+# 启动命令（指向你的app.py，工厂模式无需改）
+CMD ["python", "app.py"]
