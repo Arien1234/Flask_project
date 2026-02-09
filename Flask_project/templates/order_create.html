@@ -1,11 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>创建订单 - 科技腾飞</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-5.3.8/css/bootstrap.min.css') }}">
+    <style>
+        .order-box {
+            margin-top: 50px;
+            border: 1px solid #ddd;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .order-box h3 {
+            margin-bottom: 25px;
+            color: #333;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .btn-submit {
+            width: 100%;
+            padding: 8px 0;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
+<!-- 导航栏 -->
 <nav class="navbar navbar-expand-lg bg-body-tertiary" style="border-radius: 0">
     <div class="container">
         <a class="navbar-brand" href="#">科技腾飞</a>
@@ -16,25 +37,26 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Home</a>
+                    <a class="nav-link" href="#">首页</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">订单管理</a>
+                    <a class="nav-link active" aria-current="page" href="#">创建订单</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/order/list">订单管理</a>
                 </li>
             </ul>
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                        aria-expanded="false">
-                        {{real_name}}
+                        {{ user_info.real_name }}
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="#">Action</a></li>
-                        <li><a class="dropdown-item" href="#">Another action</a></li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        <li><a class="dropdown-item" href="#">个人中心</a></li>
+                        <li><a class="dropdown-item" href="#">修改密码</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="/logout">退出登录</a></li>
                     </ul>
                 </li>
             </ul>
@@ -42,10 +64,61 @@
     </div>
 </nav>
 
+<!-- 订单创建表单 -->
 <div class="container">
-    <input type="text"/>
+    <div class="row justify-content-center">
+        <div class="col-md-8 order-box">
+            <h3>创建新订单</h3>
+            <form method="post">
+                <!-- URL输入框 -->
+                <div class="mb-3">
+                    <label for="url" class="form-label">订单URL</label>
+                    <input type="url" class="form-control" id="url" name="url" placeholder="请输入URL（如：https://www.example.com）" required>
+                </div>
+
+                <!-- 数量输入框 -->
+                <div class="mb-3">
+                    <label for="count" class="form-label">数量</label>
+                    <input type="number" class="form-control" id="count" name="count" min="1" placeholder="请输入数量（最小1）" required>
+                </div>
+
+                <!-- 提示信息 -->
+                {% if error %}
+                    <div class="alert alert-danger" role="alert">{{ error }}</div>
+                {% endif %}
+                {% if success %}
+                    <div class="alert alert-success" role="alert">{{ success }}</div>
+                {% endif %}
+
+                <!-- 提交按钮 -->
+                <button type="submit" class="btn btn-primary btn-submit">创建订单</button>
+            </form>
+        </div>
+    </div>
 </div>
 
 <script src="{{ url_for('static', filename='bootstrap-5.3.8/js/bootstrap.bundle.min.js') }}"></script>
+<script>
+    // 表单提交前的简单验证
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const url = document.getElementById('url').value;
+        const count = document.getElementById('count').value;
+
+        // 数量校验
+        if (count < 1) {
+            alert('数量必须大于0！');
+            e.preventDefault();
+            return;
+        }
+
+        // 简单URL格式校验
+        const urlReg = /^https?:\/\/.+$/;
+        if (!urlReg.test(url)) {
+            alert('请输入有效的URL（以http/https开头）！');
+            e.preventDefault();
+            return;
+        }
+    });
+</script>
 </body>
 </html>

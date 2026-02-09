@@ -11,7 +11,7 @@
  Target Server Version : 80045
  File Encoding         : 65001
 
- Date: 06/02/2026 22:42:17
+ Date: 09/02/2026 11:31:48
 */
 
 SET NAMES utf8mb4;
@@ -22,7 +22,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 DROP TABLE IF EXISTS `order`;
 CREATE TABLE `order`  (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `count` int NOT NULL,
   `user_id` int NOT NULL,
@@ -38,13 +38,14 @@ CREATE TABLE `order`  (
 INSERT INTO `order` VALUES (1, 'www.aijdi', 60, 2, 1);
 INSERT INTO `order` VALUES (2, 'http://abc', 30, 3, 2);
 INSERT INTO `order` VALUES (3, '111', 50, 2, 3);
+INSERT INTO `order` VALUES (4, 'http://daiidai', 6, 5, 1);
 
 -- ----------------------------
 -- Table structure for user
 -- ----------------------------
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user`  (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `mobile` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `password` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `real_name` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
@@ -58,5 +59,6 @@ CREATE TABLE `user`  (
 INSERT INTO `user` VALUES (1, '13058095018', '123456', 'KuKu', 2);
 INSERT INTO `user` VALUES (2, '18682362318', '123456', '张三', 1);
 INSERT INTO `user` VALUES (3, '15784253378', '123456', '李四', 1);
+INSERT INTO `user` VALUES (5, '16884455952', '123456', '张四', 1);
 
 SET FOREIGN_KEY_CHECKS = 1;

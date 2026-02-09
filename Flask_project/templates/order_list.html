@@ -1,9 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>科技腾飞</title>
+    <title>订单列表 - 科技腾飞</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-5.3.8/css/bootstrap.min.css') }}">
+    <style>
+        /* 提示框样式优化 */
+        .alert {
+            margin-bottom: 15px;
+        }
+        /* 导航栏激活状态适配 */
+        .nav-link.active {
+            color: #0d6efd !important;
+            font-weight: 500;
+        }
+    </style>
 </head>
 <body>
 
@@ -17,10 +28,11 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Home</a>
+                    <a class="nav-link" href="#">首页</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">订单管理</a>
+                    <!-- 订单管理链接设为激活状态，指向当前列表页 -->
+                    <a class="nav-link active" aria-current="page" href="/order/list">订单管理</a>
                 </li>
             </ul>
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
@@ -30,12 +42,10 @@
                         {{real_name}}
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="#">Action</a></li>
-                        <li><a class="dropdown-item" href="#">Another action</a></li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        <li><a class="dropdown-item" href="#">个人中心</a></li>
+                        <li><a class="dropdown-item" href="#">修改密码</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="/login">退出登录</a></li>
                     </ul>
                 </li>
             </ul>
@@ -44,18 +54,27 @@
 </nav>
 
 <div class="container" style="margin-top: 10px">
+    <!-- 订单创建成功提示框 -->
+    {% if success %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ success }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endif %}
 
+    <!-- 添加订单按钮 -->
     <div style="margin-bottom: 10px">
-    <a href="/order/create" type="button" class="btn btn-success">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-             class="bi bi-plus-lg me-2 align-middle" viewBox="0 0 16 16">
-            <path fill-rule="evenodd"
-                  d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"/>
-        </svg>
-        添加订单
-    </a>
-</div>
+        <a href="/order/create" type="button" class="btn btn-success">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                 class="bi bi-plus-lg me-2 align-middle" viewBox="0 0 16 16">
+                <path fill-rule="evenodd"
+                      d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"/>
+            </svg>
+            添加订单
+        </a>
+    </div>
 
+    <!-- 订单列表表格 -->
     <table class="table table-bordered">
         <thead>
         <tr>
@@ -67,28 +86,33 @@
         </tr>
         </thead>
         <tbody>
-
-        {% for item in data_list %}
-        <tr>
-            <td>{{item.id}}</td>
-            <td>{{item.url}}</td>
-            <td>{{item.count}}</td>
-            <td>
-                <span class="badge
-{% if item.status == 1 %} bg-warning
-{% elif item.status == 2 %} bg-info
-{% elif item.status == 3 %} bg-success
-{% elif item.status == 4 %} bg-danger
-{% else %} bg-secondary
-{% endif %}
-rounded-pill ms-1">
-        {{status_dict[item.status]}}
-    </span>
-            </td>
-            <td>{{item.real_name}}</td>
-        </tr>
-        {% endfor %}
-
+            <!-- 处理空数据情况 -->
+            {% if not data_list %}
+                <tr>
+                    <td colspan="5" class="text-center text-muted">暂无订单数据</td>
+                </tr>
+            {% else %}
+                {% for item in data_list %}
+                <tr>
+                    <td>{{item.id}}</td>
+                    <td>{{item.url}}</td>
+                    <td>{{item.count}}</td>
+                    <td>
+                        <span class="badge
+                        {% if item.status == 1 %} bg-warning
+                        {% elif item.status == 2 %} bg-info
+                        {% elif item.status == 3 %} bg-success
+                        {% elif item.status == 4 %} bg-danger
+                        {% else %} bg-secondary
+                        {% endif %}
+                        rounded-pill ms-1">
+                            {{status_dict[item.status]}}
+                        </span>
+                    </td>
+                    <td>{{item.real_name}}</td>
+                </tr>
+                {% endfor %}
+            {% endif %}
         </tbody>
     </table>
 </div>

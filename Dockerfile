@@ -1,7 +1,7 @@
 # 基础镜像（和本地Python版本一致，如3.9）
 FROM python:3.9-slim
 
-# 容器内工作目录（自定义，如/app）
+# 容器内工作目录（启动app.py）
 WORKDIR /app
 
 # 复制依赖文件

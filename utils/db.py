@@ -31,3 +31,24 @@ def fetch_all(sql, params):
     cursor.close()
     conn.close()
     return result
+
+def execute(sql, args=None):
+    """执行增删改操作（INSERT/UPDATE/DELETE），返回受影响行数"""
+    conn = None
+    cursor = None
+    try:
+        conn = POOL.connection()
+        cursor = conn.cursor()
+        affected_rows = cursor.execute(sql, args or ())
+        conn.commit()  # 增删改必须提交事务
+        return affected_rows
+    except Exception as e:
+        if conn:
+            conn.rollback()  # 出错回滚
+        print(f"执行增删改出错：{e}")
+        raise e  # 抛出异常让上层处理
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
