@@ -1,20 +1,28 @@
-# 基础镜像（和本地Python版本一致，如3.9）
 FROM python:3.9-slim
 
-# 容器内工作目录（启动app.py）
+# 更换阿里云源
+RUN sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list && \
+    sed -i 's/security.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list
+
+# 安装编译依赖
+RUN apt-get update -o Acquire::Timeout=300 && \
+    apt-get install -y --no-install-recommends \
+    default-libmysqlclient-dev \
+    gcc \
+    pkg-config \
+    libssl-dev \
+    libffi-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+# 设置工作目录
 WORKDIR /app
 
-# 复制依赖文件
+# 复制依赖文件并安装（追加 DBUtils）
 COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt gunicorn cryptography pymysql DBUtils -i https://pypi.tuna.tsinghua.edu.cn/simple
 
-# 安装依赖（CentOS下同样可用阿里云源加速）
-RUN pip install --no-cache-dir -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple/
-
-# 复制所有项目文件
+# 复制项目代码
 COPY . .
 
-# 暴露端口（和app.py的port一致，如5000）
-EXPOSE 5000
-
-# 启动命令（指向你的app.py，工厂模式无需改）
-CMD ["python", "app.py"]
+# 启动Gunicorn
+CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "app:app"]

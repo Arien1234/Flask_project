@@ -21,6 +21,9 @@ def auth():
 
 def create_app():
     app = Flask(__name__)
+    @app.route('/')
+    def index():
+        return "Flask App Deployed by Docker! 🚀"
     app.secret_key = 'adkagkwyiya24154gwdawd'
 
     from .views import account

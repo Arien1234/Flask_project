@@ -11,6 +11,7 @@ POOL = PooledDB(
     ping=0,
     host='localhost', port=3306, user='root', passwd='123456', db='database', charset='utf8mb4'
 )
+# 如果连接服务器需要将host='localhost'改成host='mysql'
 
 
 def fetch_one(sql, params):
